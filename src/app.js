@@ -1,20 +1,19 @@
 const express = require("express");
 const app = express();
 
-app.use("/getD",(req,res) => {
-    res.send("Get data URL");
+app.get("/get", (req, res, next) => {
+  console.log("Previous");
+  next();
 });
 
-app.use("/hello",(req,res) => {
-    res.send("Hello hello");
+app.get("/get", (req, res) => {
+  res.send("Get data URL");
 });
 
-app.use("/",(req,res) => {
-    res.send("Dash");
+app.get("/user", (req, res) => {
+  res.send("User Data");
 });
 
-app.listen(8888,function(){
-    console.log("Server Running");
+app.listen(8888, function () {
+  console.log("Server Running");
 });
-
-
