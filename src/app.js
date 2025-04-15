@@ -1,19 +1,13 @@
 const express = require("express");
+const connectDB = require("./config/database.js");
 const app = express();
 
-app.get("/get", (req, res, next) => {
-  console.log("Previous");
-  next();
-});
-
-app.get("/get", (req, res) => {
-  res.send("Get data URL");
-});
-
-app.get("/user", (req, res) => {
-  res.send("User Data");
-});
-
-app.listen(8888, function () {
-  console.log("Server Running");
-});
+connectDB().then(()=>{
+    console.log("Database connected succesfully!!!");
+    app.listen(8888,function(){
+        console.log("Server Running");
+    })
+})
+.catch(()=> {
+    console.log("Database cannot be connected!!!");
+})
