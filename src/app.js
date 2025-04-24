@@ -1,6 +1,76 @@
 const express = require("express");
 const connectDB = require("./config/database.js");
 const app = express();
+const User = require('./models/user.js');
+
+app.use(express.json());
+
+// SIGN UP USER
+app.post("/signup",async (req,res) => {
+    try{
+        const user = new User(req.body);
+        const p = await user.save();
+        res.send("User Added Successfully!");
+    }
+    catch(e)
+    {
+        res.status(400).send("Error While adding Data"+e.message)
+    }
+})
+
+// Update User By ID
+app.patch("/user/:id", async(req, res) =>{
+    const id = req.params.id;
+    try{
+       await User.findByIdAndUpdate({_id:req.params.id},req.body);
+    }
+    catch(e)
+    {
+       console.log(e.message)
+    }
+    
+    res.send("User updated SuccessFully");
+    
+})
+
+// Fetch all USER
+app.get("/feed",async (req,res)=>{
+   try{
+        const users = await User.find({});
+        res.send(users);
+   }
+   catch(e)
+   {
+        console.log(e.message);
+   }
+})
+
+// Fetch User by Email
+app.get("/userByEmail", async(req,res) => {
+    try{
+        const user =  await User.find({emailId:"sa11123@gmail.com"})
+        console.log(user);
+        res.send(user);
+    }
+    catch(e)
+    {
+        res.send("Not able to fetch Data");
+    }
+})
+
+// Delete User By Id
+app.delete("/user/:id", async (req, res) => {
+    try{
+        const id = req.params.id;
+       const result = await User.findByIdAndDelete(id);
+       console.log(result);
+        res.send("Succesfully");
+    }
+    catch(e){
+        res.status(400).send("Not able to delete "+e.message);
+    }
+    
+})
 
 connectDB().then(()=>{
     console.log("Database connected succesfully!!!");
