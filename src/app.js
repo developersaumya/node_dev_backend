@@ -4,11 +4,13 @@ const app = express();
 const User = require('./models/user.js');
 
 app.use(express.json());
+const ISALLOWED = ["lastName","gender"];
 
 // SIGN UP USER
 app.post("/signup",async (req,res) => {
     try{
-        const user = new User(req.body);
+        const data = req.body;
+        const user = new User(data);
         const p = await user.save();
         res.send("User Added Successfully!");
     }
@@ -21,16 +23,21 @@ app.post("/signup",async (req,res) => {
 // Update User By ID
 app.patch("/user/:id", async(req, res) =>{
     const id = req.params.id;
+    const data = req.body;
     try{
-       await User.findByIdAndUpdate({_id:req.params.id},req.body);
+        const updateAllowed = Object.keys(data).every((key)=>{
+           return ISALLOWED.includes(key);
+        })
+        if(!updateAllowed){
+            throw new Error("Update not allowed");
+        }
+       await User.findByIdAndUpdate({_id:req.params.id},data);
+       res.send("User updated SuccessFully");
     }
     catch(e)
     {
-       console.log(e.message)
-    }
-    
-    res.send("User updated SuccessFully");
-    
+       res.status(400).send(e.message);
+    }    
 })
 
 // Fetch all USER

@@ -1,1 +1,1 @@
-{"last_found_secrets": [{"name": "MongoDB URI - src/config/database.js", "match": "5eff43671e011b6ba26e325d45f28621b022eb7ea42b41bdbc115595b9a2aeda"}]}
+{"last_found_secrets": [{"match": "5eff43671e011b6ba26e325d45f28621b022eb7ea42b41bdbc115595b9a2aeda", "name": "MongoDB URI - src/config/database.js"}, {"match": "1570237aabdefa6b7189884c1f35d74717024636899f3304b49a2ecbc520011e", "name": "MongoDB URI - src/config/database.js"}]}
