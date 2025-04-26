@@ -32,6 +32,30 @@ app.post("/signup",async (req,res) => {
     }
 })
 
+// LOGIN USER
+app.post("/login", async (req,res)=>{
+    try{
+        const {emailId,password} = req.body;
+        const user = await User.findOne({emailId:emailId});
+        if(!user){
+            throw new Error("Credential not valid!!");
+        }
+       
+        const isPasswordValid = await bcrypt.compare(password,user.password);
+        if(isPasswordValid){
+            res.send("Logged In Successful!");
+        }
+        else{   
+          throw new Error("Password Credential not valid!!");
+        }
+        
+    }
+    catch(e)
+    {
+        res.status(400).send(" "+e)
+    }
+})
+
 // Update User By ID
 app.patch("/user/:id", async(req, res) =>{
     const id = req.params.id;
