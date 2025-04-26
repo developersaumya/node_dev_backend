@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database.js");
 const app = express();
 const User = require('./models/user.js');
+const {validateSignUp} = require('./utills/validation.js')
+const bcrypt = require("bcrypt")
 
 app.use(express.json());
 const ISALLOWED = ["lastName","gender"];
@@ -10,13 +12,23 @@ const ISALLOWED = ["lastName","gender"];
 app.post("/signup",async (req,res) => {
     try{
         const data = req.body;
-        const user = new User(data);
+        validateSignUp(data);
+        const {firstName,lastName,emailId,password,age,gender} = data;
+        const passwordHash = await bcrypt.hash(password,10);
+        const user = new User({
+            firstName,
+            lastName,
+            emailId,
+            password:passwordHash,
+            age,
+            gender
+        });
         const p = await user.save();
         res.send("User Added Successfully!");
     }
     catch(e)
     {
-        res.status(400).send("Error While adding Data"+e.message)
+        res.status(400).send("Error: " +e.message)
     }
 })
 
