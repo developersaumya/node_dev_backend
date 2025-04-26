@@ -4,8 +4,13 @@ const app = express();
 const User = require('./models/user.js');
 const {validateSignUp} = require('./utills/validation.js')
 const bcrypt = require("bcrypt")
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+ const {userAuth} = require("./middlewares/auth.js");
+
 
 app.use(express.json());
+app.use(cookieParser());
 const ISALLOWED = ["lastName","gender"];
 
 // SIGN UP USER
@@ -39,16 +44,16 @@ app.post("/login", async (req,res)=>{
         const user = await User.findOne({emailId:emailId});
         if(!user){
             throw new Error("Credential not valid!!");
-        }
-       
-        const isPasswordValid = await bcrypt.compare(password,user.password);
+        }       
+        const isPasswordValid = await user.validatePassword(password);
         if(isPasswordValid){
+            const token = await user.getJWT();
+            res.cookie("token",token);
             res.send("Logged In Successful!");
         }
         else{   
           throw new Error("Password Credential not valid!!");
         }
-        
     }
     catch(e)
     {
@@ -77,12 +82,11 @@ app.patch("/user/:id", async(req, res) =>{
 })
 
 // Fetch all USER
-app.get("/feed",async (req,res)=>{
+app.get("/feed",userAuth,async (req,res)=>{
    try{
         const users = await User.find({});
         res.send(users);
-   }
-   catch(e)
+   }catch(e)
    {
         console.log(e.message);
    }
@@ -98,6 +102,17 @@ app.get("/userByEmail", async(req,res) => {
     catch(e)
     {
         res.send("Not able to fetch Data");
+    }
+})
+
+//Get Profile by Token
+app.get('/profile',userAuth,async (req,res) => {
+    try{
+        const profileData = req.user;
+        res.send(profileData);
+    }
+    catch(e){
+        res.status(400).send(" "+e.message);
     }
 })
 
