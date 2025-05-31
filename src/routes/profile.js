@@ -12,4 +12,8 @@ profileRouter.get('/profile',userAuth,async (req,res) => {
     }
 })
 
+//UpdateProfile
+
+profileRouter.patch("/profile")
+
 module.exports = profileRouter
